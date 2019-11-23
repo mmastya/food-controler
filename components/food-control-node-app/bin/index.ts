@@ -1,1 +1,3 @@
-console.log("Entry point for back end implementation.");
+import { start } from "../src/index";
+
+start();
