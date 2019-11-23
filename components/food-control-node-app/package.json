@@ -1,0 +1,81 @@
+{
+  "name": "food-control-node-app",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "homepage": "",
+  "repository": {
+    "type": "",
+    "url": ""
+  },
+  "bugs": {
+    "email": "dmitriy@borodin.site",
+    "url": ""
+  },
+  "version": "1.0.0",
+  "main": "index.js",
+  "bin": "",
+  "files": [],
+  "scripts": {
+    "test": "rearguard test",
+    "start": "rearguard start",
+    "build": "rearguard build",
+    "sync": "rearguard sync",
+    "check_deps_on_npm": "rearguard check_deps_on_npm",
+    "lint": "rearguard lint",
+    "lint-fix": "rearguard lint --fix",
+    "typecheck": "tsc --noEmit",
+    "validate-prettiness": "prettier -c '**/*.{ts,tsx,json,md}'",
+    "validate": "npm run lint && npm run typecheck && npm run validate-prettiness",
+    "make-prettier": "prettier --write '**/*.{ts,tsx,json,md}'"
+  },
+  "types": "",
+  "engines": {
+    "node": ">=10 <13",
+    "npm": ">=6 <7"
+  },
+  "browserslist": [
+    "last 2 versions"
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged",
+      "pre-push": "npm run validate"
+    }
+  },
+  "rearguard": {
+    "bin": "./bin/index.ts",
+    "project": {
+      "runtime": "node",
+      "type": "app"
+    },
+    "components": [
+      "components"
+    ],
+    "distribution": {
+      "publish_to_docker": false,
+      "docker": {
+        "org_namespace": "org_namespace"
+      }
+    },
+    "configs": {
+      "noOverwriteTSConfig": false,
+      "noOverwriteTSTestConfig": false,
+      "noOverwriteLintConfig": false,
+      "noOverwriteGitIgnore": false
+    }
+  },
+  "dependencies": {
+    "tslib": "^1.10.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.8.0",
+    "@typescript-eslint/parser": "^2.8.0",
+    "eslint": "^6.7.0",
+    "eslint-config-prettier": "^6.7.0",
+    "husky": "^3.1.0",
+    "prettier": "^1.19.1",
+    "pretty-quick": "^2.0.1",
+    "typescript": "^3.7.2"
+  }
+}

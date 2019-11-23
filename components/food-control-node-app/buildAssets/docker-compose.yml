@@ -1,0 +1,53 @@
+version: "3.7"
+
+services:
+  front-end:
+    image: docker_org_name/project-name-front-end:1.0.0
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    expose:
+      - "80"
+      - "443"
+    depends_on:
+      - back-end
+    networks:
+      - example_network_name
+    environment:
+      SERVER_NAME: example.com
+      SERVER_HOST: back-end
+      SERVER_PORT: 10000
+      WS_HOST: back-end
+      WS_PORT: 10001
+    command: /bin/bash -c "envsubst '\$$SERVER_NAME \$$SERVER_HOST \$$SERVER_PORT \$$WS_HOST \$$WS_PORT' < /etc/nginx/conf.d/mysite.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
+
+  back-end:
+    image: docker_org_name/project-name-back-end:1.0.0
+    restart: "always"
+    environment:
+      JWT_SECRET_KEY: EXAPLME_JWT_SECRET_KEY
+      DB_URL: mongodb://db:27017
+      DB: example-db-name
+      SERVER_HOST: 0.0.0.0
+      SERVER_PORT: 10000
+      WS_HOST: 0.0.0.0
+      WS_PORT: 10001
+    depends_on:
+      - db
+    networks:
+      - example_network_name
+
+  db:
+    image: mongo:3.6.2
+    restart: "always"
+    ports:
+      - "127.0.0.1:27017:27017"
+    expose:
+      - "27017"
+    volumes:
+      - ./data/db:/data/db
+    networks:
+      - example_network_name
+
+networks:

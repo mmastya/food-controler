@@ -1,0 +1,51 @@
+{
+  "name": "food-control",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "homepage": "",
+  "repository": {
+    "type": "",
+    "url": ""
+  },
+  "bugs": {
+    "email": "dmitriy@borodin.site",
+    "url": ""
+  },
+  "version": "1.0.0",
+  "scripts": {
+    "bootstrap": "rearguard group bootstrap",
+    "clear": "rearguard group clear",
+    "link": "rearguard group link",
+    "lint": "rearguard group lint",
+    "start": "rearguard group start",
+    "lint-fix": "rearguard group lint-fix",
+    "typecheck": "rearguard group typecheck",
+    "validate-prettiness": "rearguard group validate-prettiness",
+    "validate": "rearguard group validate",
+    "make-prettier": "rearguard group make-prettier",
+    "build": "rearguard group build",
+    "test": "rearguard group test",
+    "publish": "rearguard group publish",
+    "refresh": "rearguard group refresh"
+  },
+  "devDependencies": {
+    "husky": "^3.1.0"
+  },
+  "keywords": [],
+  "engines": {
+    "node": ">=10 <13",
+    "npm": ">=6 <7"
+  },
+  "husky": {
+    "pre-push": "npm run validate"
+  },
+  "rearguard": {
+    "project": {
+      "type": "mono",
+      "components": [
+        "components"
+      ]
+    }
+  }
+}
