@@ -1,14 +1,15 @@
 import Koa from "koa";
 import Router from "koa-router";
+import { products } from "./seed-data";
 
 export function start(): void {
   const app = new Koa();
   const router = new Router();
 
-  router.get("/hhh", (ctx: Koa.Context) => {
-    ctx.status = 404;
-    ctx.type = "html";
-    ctx.body = "Hello World2019";
+  router.get("/api/products", (ctx: Koa.Context) => {
+    ctx.status = 200;
+    ctx.type = "application/json";
+    ctx.body = JSON.stringify(products);
   });
 
   app.use(router.routes());
