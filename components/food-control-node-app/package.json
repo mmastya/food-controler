@@ -66,9 +66,13 @@
     }
   },
   "dependencies": {
+    "koa": "^2.11.0",
+    "koa-router": "^7.4.0",
     "tslib": "^1.10.0"
   },
   "devDependencies": {
+    "@types/koa": "^2.0.52",
+    "@types/koa-router": "^7.0.42",
     "@typescript-eslint/eslint-plugin": "^2.8.0",
     "@typescript-eslint/parser": "^2.8.0",
     "eslint": "^6.7.0",
