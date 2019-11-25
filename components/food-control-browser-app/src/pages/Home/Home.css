@@ -1,0 +1,8 @@
+.home {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.title {
+  width: 100%;
+}

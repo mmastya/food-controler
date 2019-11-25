@@ -1,6 +1,6 @@
 import Koa from "koa";
 import Router from "koa-router";
-import { products } from "./seed-data";
+import { products, meal } from "./seed-data";
 
 export function start(): void {
   const app = new Koa();
@@ -10,6 +10,12 @@ export function start(): void {
     ctx.status = 200;
     ctx.type = "application/json";
     ctx.body = JSON.stringify(products);
+  });
+
+  router.get("/api/meal", (ctx: Koa.Context) => {
+    ctx.status = 200;
+    ctx.type = "application/json";
+    ctx.body = JSON.stringify(meal);
   });
 
   app.use(router.routes());
