@@ -1,25 +1,27 @@
 import Koa from "koa";
 import Router from "koa-router";
-import { products, meal } from "./seed-data";
+import { getProductRouter } from "./products";
+import koaBody from "koa-body";
+import { getMealRouter } from "./meals";
 
 export function start(): void {
   const app = new Koa();
+
+  app.use(koaBody());
+
   const router = new Router();
 
-  router.get("/api/products", (ctx: Koa.Context) => {
-    ctx.status = 200;
-    ctx.type = "application/json";
-    ctx.body = JSON.stringify(products);
-  });
-
-  router.get("/api/meal", (ctx: Koa.Context) => {
-    ctx.status = 200;
-    ctx.type = "application/json";
-    ctx.body = JSON.stringify(meal);
-  });
+  const productRouter = getProductRouter();
+  const mealRouter = getMealRouter();
 
   app.use(router.routes());
   app.use(router.allowedMethods());
+
+  app.use(productRouter.routes());
+  app.use(productRouter.allowedMethods());
+
+  app.use(mealRouter.routes());
+  app.use(mealRouter.allowedMethods());
 
   app.listen(3000, () => {
     console.log("Наш сервер запустился по адресу http://localhost:3000");
