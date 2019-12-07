@@ -1,6 +1,6 @@
-export interface Recipes {
+export interface Recipe {
   name: string;
   time: number;
   description: string;
-  ingredients: [];
+  ingredients: string;
 }

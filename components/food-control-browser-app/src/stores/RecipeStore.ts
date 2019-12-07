@@ -1,29 +1,29 @@
 import { observable, action, runInAction, toJS } from "mobx";
-import { Meal } from "../models/Meal";
+import { Recipe } from "../models/Recipe";
 
-export class MealStore {
-  @observable meals: Meal[];
+export class RecipeStore {
+  @observable recipes: Recipe[];
   @observable isLoading: boolean;
   constructor() {
     runInAction(() => {
-      this.meals = [];
+      this.recipes = [];
       this.isLoading = true;
-
-      this.init = this.init.bind(this);
-      this.create = this.create.bind(this);
-      this.update = this.update.bind(this);
-      this.remove = this.remove.bind(this);
     });
+
+    this.init = this.init.bind(this);
+    this.create = this.create.bind(this);
+    this.update = this.update.bind(this);
+    this.remove = this.remove.bind(this);
   }
 
   @action
   init(): void {
     this.isLoading = true;
-    fetch("https://localhost:5000/api/meals")
+    fetch("https://localhost:5000/api/recipes")
       .then((response) => response.json())
       .then(
-        action((meals: Meal[]) => {
-          this.meals = meals;
+        action((recipes: Recipe[]) => {
+          this.recipes = recipes;
         }),
       )
       .catch((error) => {
@@ -37,37 +37,45 @@ export class MealStore {
   }
 
   @action
-  create(meal: Meal): void {
+  create(recipe: Recipe): void {
     this.isLoading = true;
-    fetch("https://localhost:5000/api/meal", {
+    fetch("https://localhost:5000/api/recipe", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json;charset=utf-8",
       },
-      body: JSON.stringify(toJS(meal)),
+      body: JSON.stringify(toJS(recipe)),
     })
       .then((response) => response.json())
       .then(
-        action((meal: Meal) => {
-          this.meals.push(meal);
+        action((recipe: Recipe) => {
+          this.recipes.push(recipe);
+        }),
+      )
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(
+        action(() => {
+          this.isLoading = false;
         }),
       );
   }
 
   @action
-  update(meal: Meal, id: string): void {
+  update(recipe: Recipe, id: string): void {
     this.isLoading = true;
-    fetch(`https://localhost:5000/api/meal/${id}`, {
+    fetch(`https://localhost:5000/api/recipe/${id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json;charset=utf-8",
       },
-      body: JSON.stringify(toJS(meal)),
+      body: JSON.stringify(toJS(recipe)),
     })
       .then((response) => response.json())
       .then(
-        action((meal: Meal) => {
-          this.meals[id] = meal;
+        action((recipe: Recipe) => {
+          this.recipes[id] = recipe;
         }),
       )
       .catch((error) => {
@@ -83,14 +91,13 @@ export class MealStore {
   @action
   remove(id: number): void {
     this.isLoading = true;
-    fetch(`https://localhost:5000/api/meal/${id}`, {
+    fetch(`https://localhost:5000/api/recipe/${id}`, {
       method: "DELETE",
     })
       .then((response) => response.json())
       .then(
         action(() => {
-          console.log();
-          this.meals = this.meals.filter((value, index) => index !== id);
+          this.recipes = this.recipes.filter((value, index) => index !== id);
         }),
       )
       .catch((error) => {
@@ -104,4 +111,4 @@ export class MealStore {
   }
 }
 
-export const mealStore = new MealStore();
+export const recipeStore = new RecipeStore();

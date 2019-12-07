@@ -6,6 +6,7 @@ import "./App.css";
 import { CalculationPage } from "../CalculationPage/CalculationPage";
 import { ProductPage } from "../ProductPage/ProductPage";
 import { MealPage } from "../MealPage/MealPage";
+import { RecipePage } from "../RecipePage/RecipePage";
 
 export const browserHistory = createBrowserHistory();
 
@@ -16,6 +17,7 @@ export const App = (): JSX.Element => {
         <Route path="/" exact component={Home} />
         <Route path="/product" component={ProductPage} />
         <Route path="/meal" component={MealPage} />
+        <Route path="/recipe" component={RecipePage} />
         <Route path="/calculation" component={CalculationPage} />
       </Switch>
     </Router>
