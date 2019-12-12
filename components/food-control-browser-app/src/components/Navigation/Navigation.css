@@ -1,0 +1,31 @@
+.nav-wrapper {
+  border-bottom: 1px solid grey;
+}
+
+.nav-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px;
+}
+
+.nav-bar-title {
+  font-size: 20px;
+  color: black;
+}
+
+.nav-bar-list {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  list-style: none;
+}
+
+.nav-bar-list__item:not(:first-child) {
+  margin-left: 20px;
+}
+
+.nav-bar-list__item-link {
+  font-size: 15px;
+  text-decoration: none;
+  color: black;
+}

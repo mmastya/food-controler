@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { mealStore } from "../../stores/MealStore";
-import { Meal } from "../../models/Meal";
+import "./MealPage.css";
+import { Navigation } from "../../components/Navigation/Navigation";
+import "antd/dist/antd.css";
+import { Button, Input, Form, Table, Divider, Modal } from "antd";
 
 export const MealPage = observer(
   (): JSX.Element => {
     const { init, meals, isLoading, create, update, remove } = mealStore;
+    const { Column } = Table;
 
     const [meal, setMeal] = useState({
       name: "",
@@ -16,6 +20,7 @@ export const MealPage = observer(
 
     const [id, setId] = useState(null);
     const [isCreate, setCreate] = useState(true);
+    const [visible, setVisible] = useState(false);
 
     const handleChange = (event, fieldName): void => {
       const newMealState = { ...meal, ...{ [fieldName]: event.target.value } };
@@ -40,6 +45,7 @@ export const MealPage = observer(
       });
       setCreate(true);
       setId(null);
+      setVisible(false);
     };
 
     const handleUpdate = (id): void => {
@@ -53,6 +59,14 @@ export const MealPage = observer(
       remove(id);
     };
 
+    const handleModal = (): void => {
+      setVisible(true);
+    };
+
+    const handleCancel = (): void => {
+      setVisible(false);
+    };
+
     useEffect(() => {
       init();
     }, []);
@@ -60,63 +74,87 @@ export const MealPage = observer(
     return (
       <div>
         {isLoading ? <span>...is loading</span> : null}
-        <h1>MealPage</h1>
-        <ul>
-          {meals.map((meal: Meal, index: number) => (
-            <li key={index}>
-              <div>Name: {meal.name}</div>
-              <div>Calories: {meal.calories}</div>
-              <div>Grams: {meal.grams}</div>
-              <div>Vegetarian: {meal.vegetarian}</div>
-              <button onClick={(): void => handleUpdate(index)}>UPDATE</button>
-              <button onClick={(): void => handleRemove(index)}>DELETE</button>
-            </li>
-          ))}
-        </ul>
-        {isCreate ? <button>CREATE</button> : <button>UPDATE</button>}
-        <form onSubmit={handleSubmit}>
-          <label>
-            Name
-            <input
-              type="text"
-              value={meal.name}
-              onChange={(event): void => {
-                handleChange(event, "name");
-              }}
-            ></input>
-          </label>
-          <label>
-            Calories
-            <input
-              type="number"
-              value={meal.calories}
-              onChange={(event): void => {
-                handleChange(event, "calories");
-              }}
-            ></input>
-          </label>
-          <label>
-            Grams
-            <input
-              type="number"
-              value={meal.grams}
-              onChange={(event): void => {
-                handleChange(event, "grams");
-              }}
-            ></input>
-          </label>
-          <label>
-            Vegetarian
-            <input
-              type="text"
-              value={meal.vegetarian}
-              onChange={(event): void => {
-                handleChange(event, "vegetarian");
-              }}
-            ></input>
-          </label>
-          <button>SAVE</button>
-        </form>
+        <Navigation title="Meal Page" />
+        <div className={"button-wrapper"}>
+          {isCreate ? (
+            <Button type="primary" onClick={handleModal}>
+              create
+            </Button>
+          ) : (
+            <Button type="primary">update</Button>
+          )}
+        </div>
+        <Table dataSource={meals}>
+          <Column title="Name:" dataIndex="name" key="name" />
+          <Column title="Calories:" dataIndex="calories" key="calories" align="right" />
+          <Column title="Grams:" dataIndex="grams" key="grams" align="right" />
+          <Column title="Vegetarian:" dataIndex="vegetarian" key="vegetarian" align="right" />
+          <Column
+            title="Actions:"
+            align="right"
+            width="250px"
+            render={(text, Meal, index): JSX.Element => {
+              return (
+                <span>
+                  <Button onClick={(): void => handleUpdate(index)}>update</Button>
+                  <Divider type="vertical" />
+                  <Button onClick={(): void => handleRemove(index)}>delete</Button>
+                </span>
+              );
+            }}
+          />
+        </Table>
+
+        <Modal
+          title="Meal Page"
+          visible={visible}
+          onOk={handleSubmit}
+          onCancel={handleCancel}
+          okText="save"
+        >
+          <Form>
+            <label>
+              Name
+              <Input
+                type="text"
+                value={meal.name}
+                onChange={(event): void => {
+                  handleChange(event, "name");
+                }}
+              ></Input>
+            </label>
+            <label>
+              Calories
+              <Input
+                type="number"
+                value={meal.calories}
+                onChange={(event): void => {
+                  handleChange(event, "calories");
+                }}
+              ></Input>
+            </label>
+            <label>
+              Grams
+              <Input
+                type="number"
+                value={meal.grams}
+                onChange={(event): void => {
+                  handleChange(event, "grams");
+                }}
+              ></Input>
+            </label>
+            <label>
+              Vegetarian
+              <Input
+                type="text"
+                value={meal.vegetarian}
+                onChange={(event): void => {
+                  handleChange(event, "vegetarian");
+                }}
+              ></Input>
+            </label>
+          </Form>
+        </Modal>
       </div>
     );
   },

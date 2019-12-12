@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { productionStore } from "../../stores/ProductStore";
-import { Product } from "../../models/Product";
+import { Navigation } from "../../components/Navigation/Navigation";
+import "antd/dist/antd.css";
+import { Button, Input, Form, Table, Divider, Modal } from "antd";
+import "./ProductPage.css";
 
 export const ProductPage = observer(
   (): JSX.Element => {
     const { init, products, isLoading, create, update, remove } = productionStore;
+    const { Column } = Table;
 
     const [product, setProduct] = useState({
       name: "",
@@ -17,15 +21,15 @@ export const ProductPage = observer(
 
     const [isCreate, setCreate] = useState(true);
     const [id, setId] = useState(0);
+    const [visible, setVisible] = useState(false);
 
     const handleChange = (event, fieldName): void => {
       const newState = { ...product, ...{ [fieldName]: event.target.value } };
       setProduct(newState);
     };
 
-    const handleSubmit = (event): void => {
+    const handleSubmit = (): void => {
       console.log(product);
-      event.preventDefault();
 
       if (isCreate) {
         create(product);
@@ -36,6 +40,7 @@ export const ProductPage = observer(
       setProduct({ name: "", calories: 0, fat: 0, protein: 0, carb: 0 });
       setCreate(true);
       setId(0);
+      setVisible(false);
     };
 
     const handleUpdate = (id): void => {
@@ -48,75 +53,105 @@ export const ProductPage = observer(
       remove(id);
     };
 
+    const handleModal = (): void => {
+      setVisible(true);
+    };
+
+    const handleCancel = (): void => {
+      setVisible(false);
+    };
+
     useEffect(() => {
       init();
     }, []);
 
     return (
       <div>
+        <Navigation title="Product Page" />
         {isLoading ? <span>is loading...</span> : null}
-        <ul>
-          {products.map((product: Product, index: number) => (
-            <li key={index}>
-              <span>Name: {product.name} </span>
-              <br />
-              <span>Calories: {product.calories}</span>
-              <br />
-              <span>Fat: {product.fat}</span>
-              <br />
-              <span>Protein: {product.protein}</span>
-              <br />
-              <span>Carb: {product.carb}</span>
-              <br />
-              <button onClick={(): void => handleUpdate(index)}>update</button>
-              <button onClick={(): void => handleRemove(index)}>delete</button>
-            </li>
-          ))}
-        </ul>
-        {isCreate ? <button>create</button> : <button>update</button>}
-        <form onSubmit={handleSubmit}>
-          <label>
-            name
-            <input
-              type="text"
-              value={product.name}
-              onChange={(event): void => handleChange(event, "name")}
-            />
-          </label>
-          <label>
-            calories
-            <input
-              type="number"
-              value={product.calories}
-              onChange={(event): void => handleChange(event, "calories")}
-            />
-          </label>
-          <label>
-            fat
-            <input
-              type="number"
-              value={product.fat}
-              onChange={(event): void => handleChange(event, "fat")}
-            />
-          </label>
-          <label>
-            protein
-            <input
-              type="number"
-              value={product.protein}
-              onChange={(event): void => handleChange(event, "protein")}
-            />
-          </label>
-          <label>
-            carb
-            <input
-              type="number"
-              value={product.carb}
-              onChange={(event): void => handleChange(event, "carb")}
-            />
-          </label>
-          <button>save </button>
-        </form>
+        <div className={"button-wrapper"}>
+          {isCreate ? (
+            <Button type="primary" onClick={handleModal}>
+              create
+            </Button>
+          ) : (
+            <Button type="primary" onClick={handleModal}>
+              update
+            </Button>
+          )}
+        </div>
+
+        <Table dataSource={products} rowKey={(products, index) => `${index}`}>
+          <Column title="Name:" dataIndex="name" />
+          <Column title="Calories:" dataIndex="calories" align="right" />
+          <Column title="Fat:" dataIndex="fat" align="right" />
+          <Column title="Protein:" dataIndex="protein" align="right" />
+          <Column title="Carb:" dataIndex="carb" align="right" />
+          <Column
+            title="Actions"
+            align="right"
+            width="250px"
+            render={(text, product, index): JSX.Element => {
+              return (
+                <span>
+                  <Button onClick={(): void => handleUpdate(index)}>update</Button>
+                  <Divider type="vertical" />
+                  <Button onClick={(): void => handleRemove(index)}>delete</Button>
+                </span>
+              );
+            }}
+          />
+        </Table>
+        <Modal
+          title="Product Page"
+          visible={visible}
+          onOk={handleSubmit}
+          onCancel={handleCancel}
+          okText="save"
+        >
+          <Form layout="inline">
+            <label>
+              name
+              <Input
+                type="text"
+                value={product.name}
+                onChange={(event): void => handleChange(event, "name")}
+              />
+            </label>
+            <label>
+              calories
+              <Input
+                type="number"
+                value={product.calories}
+                onChange={(event): void => handleChange(event, "calories")}
+              />
+            </label>
+            <label>
+              fat
+              <Input
+                type="number"
+                value={product.fat}
+                onChange={(event): void => handleChange(event, "fat")}
+              />
+            </label>
+            <label>
+              protein
+              <Input
+                type="number"
+                value={product.protein}
+                onChange={(event): void => handleChange(event, "protein")}
+              />
+            </label>
+            <label>
+              carb
+              <Input
+                type="number"
+                value={product.carb}
+                onChange={(event): void => handleChange(event, "carb")}
+              />
+            </label>
+          </Form>
+        </Modal>
       </div>
     );
   },

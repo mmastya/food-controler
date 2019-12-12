@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { recipeStore } from "../../stores/RecipeStore";
-import { Recipe } from "../../models/Recipe";
+import "./RecipePage.css";
+import { Navigation } from "../../components/Navigation/Navigation";
+import "antd/dist/antd.css";
+import { Button, Input, Form, Table, Divider, Modal } from "antd";
 
 export const RecipePage = observer(
   (): JSX.Element => {
     const { recipes, isLoading, init, create, update, remove } = recipeStore;
+    const { Column } = Table;
 
     const [recipe, setRecipe] = useState({
       name: "",
@@ -16,15 +20,15 @@ export const RecipePage = observer(
 
     const [id, setId] = useState(null);
     const [isCreate, setCreate] = useState(true);
+    const [visible, setVisible] = useState(false);
 
     const handleChange = (event, fieldName): void => {
       const newRecipeState = { ...recipe, ...{ [fieldName]: event.target.value } };
       setRecipe(newRecipeState);
     };
 
-    const handleSubmit = (event): void => {
+    const handleSubmit = (): void => {
       console.log(recipe);
-      event.preventDefault();
 
       if (isCreate) {
         create(recipe);
@@ -41,6 +45,8 @@ export const RecipePage = observer(
 
       setId(null);
       setCreate(true);
+
+      setVisible(false);
     };
 
     const handleUpdate = (id): void => {
@@ -53,60 +59,95 @@ export const RecipePage = observer(
       remove(id);
     };
 
+    const handleModal = (): void => {
+      setVisible(true);
+    };
+
+    const handleCancel = (): void => {
+      setVisible(false);
+    };
+
     useEffect(() => {
       init();
     }, []);
     return (
       <div>
         {isLoading ? <span>is loading...</span> : null}
-        <ul>
-          {recipes.map((recipe: Recipe, index: number) => (
-            <li key={index}>
-              <div>Name: {recipe.name}</div>
-              <div>Time: {recipe.time}</div>
-              <div>Description: {recipe.description}</div>
-              <div>Ingredients: {recipe.ingredients}</div>
-              <button onClick={(): void => handleUpdate(index)}>UPDATE</button>
-              <button onClick={(): void => handleRemove(index)}>DELETE</button>
-            </li>
-          ))}
-        </ul>
-        {isCreate ? <button>CREATE</button> : <button>UPDATES</button>}
-        <form onSubmit={handleSubmit}>
-          <label>
-            Name:
-            <input
-              type="text"
-              value={recipe.name}
-              onChange={(event): void => handleChange(event, "name")}
-            ></input>
-          </label>
-          <label>
-            Time:
-            <input
-              type="number"
-              value={recipe.time}
-              onChange={(event): void => handleChange(event, "time")}
-            ></input>
-          </label>
-          <label>
-            Description:
-            <input
-              type="text"
-              value={recipe.description}
-              onChange={(event): void => handleChange(event, "description")}
-            ></input>
-          </label>
-          <label>
-            Ingredients:
-            <input
-              type="text"
-              value={recipe.ingredients}
-              onChange={(event): void => handleChange(event, "ingredients")}
-            ></input>
-          </label>
-          <button>SAVE</button>
-        </form>
+        <Navigation title="Recipe Page" />
+        <div className={"button-wrapper"}>
+          {isCreate ? (
+            <Button type="primary" onClick={handleModal}>
+              create
+            </Button>
+          ) : (
+            <Button type="primary" onClick={handleModal}>
+              update
+            </Button>
+          )}
+        </div>
+        <Table dataSource={recipes}>
+          <Column title="Name:" dataIndex="name" key="name" />
+          <Column title="Time:" dataIndex="time" key="time" align="right" />
+          <Column title="Description:" dataIndex="description" key="description" align="right" />
+          <Column title="Ingredients:" dataIndex="ingredients" key="ingredients" align="right" />
+          <Column
+            title="Actions:"
+            align="right"
+            width="250px"
+            render={(text, recipe, index): JSX.Element => {
+              return (
+                <span>
+                  <Button onClick={(): void => handleUpdate(index)}>update</Button>
+                  <Divider type="vertical" />
+                  <Button onClick={(): void => handleRemove(index)}>delete</Button>
+                </span>
+              );
+            }}
+          />
+        </Table>
+
+        <Modal
+          title="Recipe Page"
+          visible={visible}
+          onOk={handleSubmit}
+          onCancel={handleCancel}
+          okText="save"
+        >
+          <Form>
+            <label>
+              Name:
+              <Input
+                type="text"
+                value={recipe.name}
+                onChange={(event): void => handleChange(event, "name")}
+              ></Input>
+            </label>
+            <label>
+              Time:
+              <Input
+                type="number"
+                value={recipe.time}
+                onChange={(event): void => handleChange(event, "time")}
+              ></Input>
+            </label>
+            <label>
+              Description:
+              <Input
+                type="text"
+                value={recipe.description}
+                onChange={(event): void => handleChange(event, "description")}
+              ></Input>
+            </label>
+            <label>
+              Ingredients:
+              <Input
+                type="text"
+                value={recipe.ingredients}
+                onChange={(event): void => handleChange(event, "ingredients")}
+              ></Input>
+            </label>
+          </Form>
+        </Modal>
       </div>
     );
   },
